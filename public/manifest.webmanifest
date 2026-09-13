@@ -1,0 +1,11 @@
+{
+  "name": "MyFit AI",
+  "short_name": "MyFit",
+  "description": "你的个人 AI 健康管理系统",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f9f5",
+  "theme_color": "#213d32",
+  "orientation": "portrait-primary",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

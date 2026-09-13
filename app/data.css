@@ -1,0 +1,1 @@
+.data-entry{margin-top:16px}.entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.entry-input{display:flex;flex-direction:column;gap:6px;font-size:10px;color:var(--muted)}.entry-input input{border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px;color:var(--ink);background:#fbfcfa}
