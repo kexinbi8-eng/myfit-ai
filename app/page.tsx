@@ -1,89 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Activity,
-  ArrowRight,
-  Dumbbell,
-  ChevronRight,
-  Check,
-  ChefHat,
-  CircleUserRound,
-  Flame,
-  Footprints,
-  Moon,
-  Plus,
-  Sparkle,
-  Target,
-  Utensils,
-  X,
-} from "lucide-react";
+import { ArrowRight, CircleUserRound, Dumbbell, Sparkle, Utensils } from "lucide-react";
+import { useLocalStorage } from "@/lib/storage";
 
-const Barbell = Dumbbell;
-const CaretRight = ChevronRight;
-
-const navItems = [
-  { label: "首页", icon: Activity },
-  { label: "饮食", icon: Utensils },
-  { label: "训练", icon: Barbell },
-  { label: "数据", icon: Target },
-  { label: "我的", icon: CircleUserRound },
-];
+type Profile = { height: number | ""; weight: number | "" };
 
 export default function Home() {
-  const [activeNav, setActiveNav] = useState("首页");
-  const [quickOpen, setQuickOpen] = useState(false);
+  const [profile] = useLocalStorage<Profile>("myfit-profile", { height: "", weight: "" });
+  const bmi = typeof profile.height === "number" && profile.height > 0 && typeof profile.weight === "number" && profile.weight > 0 ? (profile.weight / ((profile.height / 100) ** 2)).toFixed(1) : "—";
+  const date = new Intl.DateTimeFormat("zh-CN", { month: "long", day: "numeric", weekday: "long" }).format(new Date());
 
-  return (
-    <main className="app-shell">
-      <section className="app-frame">
-        <header className="topbar">
-          <div>
-            <p className="eyebrow">Good evening</p>
-            <h1>2026年9月12日</h1>
-          </div>
-          <button className="avatar-button" aria-label="打开个人资料"><span>毕</span></button>
-        </header>
-
-        <div className="page-content">
-          <section className="hero-card">
-            <div className="hero-copy">
-              <span className="status-pill"><Sparkle size={14} weight="fill" /> 今日状态</span>
-              <h2>稳稳地，<br /><em>向目标前进。</em></h2>
-              <p>今天的节奏很好，继续保持。</p>
-            </div>
-            <div className="hero-orbit"><div className="orbit-dot" /><div className="orbit-ring" /><div className="hero-flame"><Flame size={22} weight="fill" /></div></div>
-          </section>
-
-          <section className="section-block">
-            <div className="section-heading"><h3>今天状态</h3><button className="text-button">查看详情 <ArrowRight size={15} /></button></div>
-            <div className="metrics-grid">
-              <MetricCard icon={<Activity size={18} />} label="体重" value="68.4" unit="kg" tone="green" />
-              <MetricCard icon={<Target size={18} />} label="腰围" value="78" unit="cm" tone="orange" />
-              <MetricCard icon={<Footprints size={18} />} label="步数" value="7,820" unit="步" tone="blue" />
-              <MetricCard icon={<Moon size={18} />} label="睡眠" value="7.5" unit="小时" tone="purple" />
-            </div>
-          </section>
-
-          <section className="section-block"><div className="section-heading"><h3>今日目标</h3><span className="muted-label">9月12日</span></div><div className="goal-card"><ProgressRow label="饮食" value="1,420" total="1,900 kcal" percent={75} color="lime" /><ProgressRow label="蛋白质" value="96" total="130 g" percent={74} color="orange" /><ProgressRow label="步数" value="7,820" total="8,000" percent={98} color="blue" /></div></section>
-
-          <section className="section-block"><div className="section-heading"><h3>今天吃什么</h3><button className="text-button">饮食记录 <ArrowRight size={15} /></button></div><div className="meal-card"><MealRow time="早餐" title="鸡蛋 + 贝贝南瓜 + 西兰花" done /><MealRow time="午餐" title="公司解决" /><MealRow time="晚餐" title="鸡胸肉 + 西兰花 + 胡萝卜" action /></div></section>
-
-          <section className="section-block"><div className="section-heading"><h3>今天练什么</h3><button className="text-button">训练计划 <ArrowRight size={15} /></button></div><div className="workout-card"><div className="workout-top"><div><span className="workout-tag">力量训练 · 45 min</span><h4>胸 + 三头</h4></div><div className="workout-icon"><Barbell size={22} /></div></div><div className="exercise-list"><Exercise name="卧推" detail="4 × 8–12" /><Exercise name="上斜哑铃卧推" detail="3 × 10–12" /><Exercise name="夹胸" detail="3 × 12–15" /><Exercise name="绳索下压" detail="3 × 10–15" /></div><button className="primary-button"><Barbell size={18} /> 开始训练</button></div></section>
-
-          <section className="ai-card" onClick={() => window.location.href = "/coach"}><div className="ai-icon"><Sparkle size={18} weight="fill" /></div><div className="ai-copy"><span>AI 健身教练</span><h3>今晚想吃什么？</h3><p>根据你的目标和冰箱库存，给你一点灵感。</p></div><button className="round-arrow" aria-label="打开 AI 教练"><CaretRight size={19} /></button></section>
-        </div>
-
-        <button className="fab" onClick={() => setQuickOpen(true)} aria-label="快速记录"><Plus size={26} /></button>
-        <nav className="bottom-nav">{navItems.map(({ label, icon: Icon }) => <button key={label} className={activeNav === label ? "nav-item active" : "nav-item"} onClick={() => { setActiveNav(label); if (label === "饮食") window.location.href = "/food"; if (label === "训练") window.location.href = "/workout"; if (label === "数据") window.location.href = "/data"; if (label === "我的") window.location.href = "/profile"; }}><Icon size={21} weight={activeNav === label ? "fill" : "regular"} /><span>{label}</span></button>)}</nav>
-        {quickOpen && <div className="modal-backdrop" onClick={() => setQuickOpen(false)}><div className="quick-sheet" onClick={(e) => e.stopPropagation()}><div className="sheet-header"><div><span className="eyebrow">快速记录</span><h2>现在记录一下</h2></div><button className="close-button" onClick={() => setQuickOpen(false)}><X size={20} /></button></div><div className="quick-grid"><QuickAction icon={<Utensils />} label="记录饮食" /><QuickAction icon={<Activity />} label="记录体重" /><QuickAction icon={<Barbell />} label="记录运动" /><QuickAction icon={<Footprints />} label="记录步数" /><QuickAction icon={<Moon />} label="记录睡眠" /><QuickAction icon={<ChefHat />} label="添加食材" /></div></div></div>}
-      </section>
-    </main>
-  );
+  return <main className="app-shell"><section className="app-frame">
+    <header className="topbar"><div><p className="eyebrow">MyFit AI</p><h1>{date}</h1></div><button className="avatar-button" aria-label="打开个人资料" onClick={() => window.location.href = "/profile"}><span>我</span></button></header>
+    <div className="page-content home-simple-content">
+      <section className="hero-card simple-hero"><div className="hero-copy"><span className="status-pill"><Sparkle size={14} /> 今日计划</span><h2>从今天开始，<br /><em>照顾好自己。</em></h2><p>先设置个人数据，再开始你的健康计划。</p></div></section>
+      <PlanCard href="/workout" icon={<Dumbbell size={22} />} title="健身计划" description="查看今天的训练安排，记录每一次进步。" action="进入训练" tone="green" />
+      <PlanCard href="/food" icon={<Utensils size={22} />} title="饮食计划" description="管理你的食材库存，安排每天的饮食。" action="进入饮食" tone="orange" />
+      <section className="personal-summary"><div className="section-heading"><div><span className="eyebrow">我的数据</span><h3>个人身体数据</h3></div><button className="text-button" onClick={() => window.location.href = "/profile"}>编辑 <ArrowRight size={15} /></button></div><div className="personal-metrics"><div><span>身高</span><strong>{profile.height || "—"}<small>{profile.height ? " cm" : ""}</small></strong></div><div><span>体重</span><strong>{profile.weight || "—"}<small>{profile.weight ? " kg" : ""}</small></strong></div><div><span>BMI</span><strong>{bmi}</strong></div></div>{bmi === "—" && <p className="setup-hint"><CircleUserRound size={16} /> 点击“编辑”填写身高和体重，BMI 会自动计算。</p>}</section>
+    </div>
+    <BottomNav active="首页" />
+  </section></main>;
 }
 
-function MetricCard({ icon, label, value, unit, tone }: { icon: React.ReactNode; label: string; value: string; unit: string; tone: string }) { return <div className="metric-card"><div className={`metric-icon ${tone}`}>{icon}</div><span className="metric-label">{label}</span><div className="metric-value">{value}<small>{unit}</small></div></div>; }
-function ProgressRow({ label, value, total, percent, color }: { label: string; value: string; total: string; percent: number; color: string }) { return <div className="progress-row"><div className="progress-meta"><span>{label}</span><span><strong>{value}</strong> / {total}</span></div><div className="progress-track"><div className={`progress-fill ${color}`} style={{ width: `${percent}%` }} /></div></div>; }
-function MealRow({ time, title, done, action }: { time: string; title: string; done?: boolean; action?: boolean }) { return <div className="meal-row"><div className={`meal-status ${done ? "done" : ""}`}>{done ? <Check size={14} /> : <span />}</div><div className="meal-info"><span>{time}</span><strong>{title}</strong></div>{action ? <button className="small-button">记录晚餐</button> : <CaretRight size={17} className="row-arrow" />}</div>; }
-function Exercise({ name, detail }: { name: string; detail: string }) { return <div className="exercise-row"><span>{name}</span><strong>{detail}</strong></div>; }
-function QuickAction({ icon, label }: { icon: React.ReactNode; label: string }) { return <button className="quick-action" onClick={() => { if (label === "记录饮食" || label === "添加食材") window.location.href = "/food"; if (label === "记录体重" || label === "记录步数" || label === "记录睡眠") window.location.href = "/data"; if (label === "记录运动") window.location.href = "/workout"; }}><span>{icon}</span><strong>{label}</strong></button>; }
+function PlanCard({ href, icon, title, description, action, tone }: { href: string; icon: React.ReactNode; title: string; description: string; action: string; tone: string }) { return <button className={`plan-card ${tone}`} onClick={() => window.location.href = href}><span className="plan-icon">{icon}</span><span className="plan-copy"><strong>{title}</strong><small>{description}</small><em>{action} <ArrowRight size={14} /></em></span></button>; }
+function BottomNav({ active }: { active: string }) { return <nav className="bottom-nav">{[["首页", "/"], ["饮食", "/food"], ["训练", "/workout"], ["数据", "/data"], ["我的", "/profile"]].map(([label, href]) => <button key={label} className={active === label ? "nav-item active" : "nav-item"} onClick={() => window.location.href = href}><span>{label}</span></button>)}</nav>; }

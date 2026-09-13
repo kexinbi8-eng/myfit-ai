@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./extended.css";
+import "./custom.css";
 import "./coach.css";
 import "./data.css";
 import { RegisterServiceWorker } from "./register-sw";
